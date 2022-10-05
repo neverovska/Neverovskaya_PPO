@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".KeyboardFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/button1"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:background="@drawable/custom_button"
+                android:longClickable="false"
+                android:text="1"
+                android:textColor="@color/black"
+                android:textSize="27sp" />
+
+            <Button
+                android:id="@+id/button2"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:background="@drawable/custom_button"
+                android:longClickable="false"
+                android:text="2"
+                android:textColor="@color/black"
+                android:textSize="27sp" />
+
+            <Button
+                android:id="@+id/button3"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:background="@drawable/custom_button"
+                android:longClickable="false"
+                android:text="3"
+                android:textColor="@color/black"
+                android:textSize="27sp" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/button4"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:longClickable="false"
+                android:background="@drawable/custom_button"
+                android:textSize="27sp"
+                android:textColor="@color/black"
+                android:text="4" />
+
+            <Button
+                android:id="@+id/button5"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:longClickable="false"
+                android:background="@drawable/custom_button"
+                android:textSize="27sp"
+                android:textColor="@color/black"
+                android:text="5" />
+
+            <Button
+                android:id="@+id/button6"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:longClickable="false"
+                android:background="@drawable/custom_button"
+                android:textSize="27sp"
+                android:textColor="@color/black"
+                android:text="6" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/button7"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:longClickable="false"
+                android:background="@drawable/custom_button"
+                android:textSize="27sp"
+                android:textColor="@color/black"
+                android:text="7" />
+
+            <Button
+                android:id="@+id/button8"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:longClickable="false"
+                android:background="@drawable/custom_button"
+                android:textSize="27sp"
+                android:textColor="@color/black"
+                android:text="8" />
+
+            <Button
+                android:id="@+id/button9"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:longClickable="false"
+                android:background="@drawable/custom_button"
+                android:textSize="27sp"
+                android:textColor="@color/black"
+                android:text="9" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/button_dot"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:background="@drawable/custom_button"
+                android:longClickable="false"
+                android:textSize="34sp"
+                android:textColor="@color/black"
+                android:text="." />
+
+            <Button
+                android:id="@+id/button0"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:background="@drawable/custom_button"
+                android:longClickable="false"
+                android:textSize="27sp"
+                android:textColor="@color/black"
+                android:text="0" />
+
+            <Button
+                android:id="@+id/button_del"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:background="@drawable/custom_button"
+                android:longClickable="true"
+                android:textSize="28sp"
+                android:textColor="@color/black"
+                android:text="C" />
+        </TableRow>
+    </TableLayout>
+
+</FrameLayout>

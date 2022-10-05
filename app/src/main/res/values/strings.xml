@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">LR1</string>
+    <string-array name="currencies">
+        <item>BYN</item>
+        <item>USD</item>
+        <item>EUR</item>
+        <item>PLN</item>
+    </string-array>
+    <string-array name="distances">
+        <item>km</item>
+        <item>m</item>
+        <item>сm</item>
+        <item>mi</item>
+        <item>ft</item>
+        <item>inch</item>
+    </string-array>
+    <string-array name="volumes">
+        <item>pint</item>
+        <item>l</item>
+        <item>ml</item>
+    </string-array>
+    <string-array name="weights">
+        <item>kg</item>
+        <item>g</item>
+        <item>t</item>
+        <item>lb</item>
+    </string-array>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="currency">Currency</string>
+    <string name="copy">Copy</string>
+</resources>

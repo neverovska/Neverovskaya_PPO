@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ValuesFragment">
+
+    <LinearLayout
+        android:layout_width="365dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_c"
+                    style="@android:style/Widget.Material.Light.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_b"
+                    android:textColor="@color/black"
+                    android:text="@string/currency" />
+
+                <Button
+                    android:id="@+id/button_w"
+                    style="@android:style/Widget.Material.Light.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/custom_b"
+                    android:textColor="@color/black"
+                    android:layout_weight="1"
+                    android:text="Weight" />
+
+                <Button
+                    android:id="@+id/button_d"
+                    style="@android:style/Widget.Material.Light.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/custom_b"
+                    android:textColor="@color/black"
+                    android:layout_weight="1"
+                    android:text="Distance" />
+
+                <Button
+                    android:id="@+id/button_v"
+                    style="@android:style/Widget.Material.Light.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_b"
+                    android:textColor="@color/black"
+                    android:text="Volume" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingTop="30dp"
+            android:paddingEnd="0dp"
+            android:paddingBottom="13dp">
+
+            <Spinner
+                android:id="@+id/spinner1"
+                android:layout_width="95dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp" />
+
+            <EditText
+                android:id="@+id/editText1"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:contextClickable="false"
+                android:cursorVisible="false"
+                android:ems="10"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:focusedByDefault="false"
+                android:inputType="textPersonName"
+                android:keyboardNavigationCluster="false"
+                android:minHeight="48dp"
+                android:text="" />
+
+            <Button
+                android:id="@+id/button_copy1"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="39dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+                android:background="@drawable/custom_b"
+                app:icon="@drawable/ic_copy_24"
+                app:iconSize="20dp"
+                android:paddingStart="10dp"
+                app:iconTint="@color/black" />
+        </TableRow>
+
+        <Button
+            android:id="@+id/button_rev"
+            style="@android:style/Widget.Material.Light.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_marginHorizontal="2dp"
+
+            android:background="@drawable/custom_b"
+            app:icon="@drawable/ic_swap"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="25dp"
+            app:iconTint="@color/black" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingTop="13dp"
+            android:paddingBottom="20dp">
+
+            <Spinner
+                android:id="@+id/spinner2"
+                android:layout_width="95dp"
+                android:layout_height="wrap_content"
+
+                android:minHeight="48dp" />
+
+            <EditText
+                android:id="@+id/editText2"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:contextClickable="false"
+                android:cursorVisible="false"
+                android:defaultFocusHighlightEnabled="false"
+                android:ems="10"
+
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:focusedByDefault="false"
+                android:inputType="textPersonName"
+                android:minHeight="48dp"
+                android:text="" />
+
+            <Button
+                android:id="@+id/button_copy2"
+                style="@android:style/Widget.Material.Light.Button.Borderless"
+                android:layout_width="39dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_b"
+                android:paddingStart="10dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+                app:icon="@drawable/ic_copy_24"
+                app:iconSize="20dp"
+                app:iconTint="@color/black" />
+
+        </TableRow>
+
+    </LinearLayout>
+
+</FrameLayout>
