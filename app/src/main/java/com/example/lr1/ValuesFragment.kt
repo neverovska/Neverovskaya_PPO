@@ -161,6 +161,8 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                             activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
                         val clip = ClipData.newPlainText("text", textF)
                         clipboard?.setPrimaryClip(clip)
+                        fromPos = fromSpinner.selectedItemPosition
+                        toPos = toSpinner.selectedItemPosition
                     }
                 }
                 copyButton2.id -> {
@@ -169,16 +171,22 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                             activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
                         val clip = ClipData.newPlainText("text", textT)
                         clipboard?.setPrimaryClip(clip)
+                        fromPos = fromSpinner.selectedItemPosition
+                        toPos = toSpinner.selectedItemPosition
                     }
                 }
                 revButton.id -> {
-                    val textB = textT
-                    textT = textF
-                    textF = textB
+                    //val textB = textT
+                    //textT = textF
+                    //textF = textB
 
-                    textTo.setText(textT)
-                    textFrom.setText(textF)
+                    //textTo.setText(textT)
+                    //textFrom.setText(textF)
+                    textF = ""
+                    textT = ""
 
+                    textFrom.text.clear()
+                    textTo.text.clear()
 
                     fromPos = toSpinner.selectedItemPosition
                     toPos = fromSpinner.selectedItemPosition
@@ -188,6 +196,7 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
             selItem(v)
         }
     }
+
 
     fun selItem(view: View){
         adapter = ArrayAdapter(view.context, android.R.layout.simple_spinner_item, spinArray)
