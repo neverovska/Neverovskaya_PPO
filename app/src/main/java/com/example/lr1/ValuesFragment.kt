@@ -91,6 +91,9 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         textFrom = view.findViewById(R.id.editText1)
         textTo = view.findViewById(R.id.editText2)
 
+        textFrom .showSoftInputOnFocus = false
+        textTo .showSoftInputOnFocus = false
+
         currencyButton.setOnClickListener(this)
         weightButton.setOnClickListener(this)
         distanceButton.setOnClickListener(this)
@@ -106,7 +109,7 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
 //        fromSpinner.setSelection(fromPos)
 //        toSpinner.setSelection(toPos)
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             selItem(view)
         }
     }
@@ -163,7 +166,8 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                         clipboard?.setPrimaryClip(clip)
                         fromPos = fromSpinner.selectedItemPosition
                         toPos = toSpinner.selectedItemPosition
-                    }
+                        Toast.makeText(context, "Value is copied", Toast.LENGTH_SHORT).show()
+                    } else Toast.makeText(context, "Enter value to copy", Toast.LENGTH_SHORT).show()
                 }
                 copyButton2.id -> {
                     if (textT != "") {
@@ -173,7 +177,8 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                         clipboard?.setPrimaryClip(clip)
                         fromPos = fromSpinner.selectedItemPosition
                         toPos = toSpinner.selectedItemPosition
-                    }
+                        Toast.makeText(context, "Value is copied", Toast.LENGTH_SHORT).show()
+                    } else Toast.makeText(context, "Enter value to copy", Toast.LENGTH_SHORT).show()
                 }
                 revButton.id -> {
                     //val textB = textT
@@ -198,7 +203,7 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
     }
 
 
-    fun selItem(view: View){
+    fun selItem(view: View) {
         adapter = ArrayAdapter(view.context, android.R.layout.simple_spinner_item, spinArray)
         fromSpinner.adapter = adapter
         toSpinner.adapter = adapter
@@ -208,33 +213,40 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
 
     fun setFromText(buttonIndex: Int) {
-        when (buttonIndex) {
-            1 -> textF += "1"
-            2 -> textF += "2"
-            3 -> textF += "3"
-            4 -> textF += "4"
-            5 -> textF += "5"
-            6 -> textF += "6"
-            7 -> textF += "7"
-            8 -> textF += "8"
-            9 -> textF += "9"
-            10 -> {
-                if (!textF.contains(".")) {
-                    textF += if (textF.isNullOrEmpty()) {
-                        "0."
-                    } else {
-                        "."
-                    }
+        if (!(spinArray.contentEquals(resources.getStringArray(R.array.currencies)) && textF.length -
+                    textF.indexOf(".") > 2 && textF.contains(".") && buttonIndex !=11
+                    && buttonIndex != 12) ||( textF.length -
+            textF.indexOf(".") <= 15 && !(spinArray.contentEquals(resources.getStringArray(R.array.currencies))))
+        ) {
+            when (buttonIndex) {
+                1 -> textF += "1"
+                2 -> textF += "2"
+                3 -> textF += "3"
+                4 -> textF += "4"
+                5 -> textF += "5"
+                6 -> textF += "6"
+                7 -> textF += "7"
+                8 -> textF += "8"
+                9 -> textF += "9"
+                10 -> {
+                    if (!textF.contains(".")) {
+                        textF += if (textF.isNullOrEmpty()) {
+                            "0."
+                        } else {
+                            "."
+                        }
+                    } else Toast.makeText(context, "Double dot isn't allowed", Toast.LENGTH_SHORT)
+                        .show()
                 }
-            }
-            0 -> {
-                if (!(textF.isNotEmpty() && textF[0] == '0' && !textF.contains("."))) {
-                    textF += "0"
+                0 -> {
+                    if (!(textF.isNotEmpty() && textF[0] == '0' && !textF.contains("."))) {
+                        textF += "0"
+                    } else Toast.makeText(context, "Double zero isn't allowed", Toast.LENGTH_SHORT)
+                        .show()
                 }
-
+                11 -> textF = textF.dropLast(1)
+                12 -> textF = ""
             }
-            11 -> textF = textF.dropLast(1)
-            12 -> textF = ""
         }
         textFrom.setText(textF)
         textT = if (textF != "") {
@@ -250,8 +262,8 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         super.onSaveInstanceState(outState)
 
         outState.putSerializable("converter", converter)
-        outState.putInt("fromSpin", fromSpinner.selectedItemPosition )
-        outState.putInt("toSpin", toSpinner.selectedItemPosition )
+        outState.putInt("fromSpin", fromSpinner.selectedItemPosition)
+        outState.putInt("toSpin", toSpinner.selectedItemPosition)
         outState.putString("from", textF)
         outState.putStringArray("array", spinArray)
     }

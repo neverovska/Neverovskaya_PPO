@@ -2,6 +2,7 @@ package com.example.lr1
 
 import com.example.lr1.Unit
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 class ConverterCurrency : Converter() {
 
@@ -45,6 +46,6 @@ class ConverterCurrency : Converter() {
             }
             else -> convertTo = (0.0).toBigDecimal()
         }
-        return convertTo.toString()
+        return convertTo.setScale(2, RoundingMode.HALF_EVEN).toString()
     }
 }
