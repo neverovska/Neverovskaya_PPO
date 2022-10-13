@@ -1,8 +1,9 @@
 package com.example.lr1
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 
-class ConverterVolume : Converter() {
+class   ConverterVolume : Converter() {
     override fun convertFromTo(fromUnit: String, toUnit: String, valueFrom: String): String {
 
         val convertFrom: BigDecimal = valueFrom.toBigDecimal()
@@ -32,7 +33,7 @@ class ConverterVolume : Converter() {
             }
             else -> convertTo = (0.0).toBigDecimal()
         }
-        return convertTo.toString()
+        return convertTo.setScale(15, RoundingMode.HALF_EVEN).toString()
     }
 }
 

@@ -1,6 +1,7 @@
 package com.example.lr1
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 class ConverterWeight : Converter() {
     override fun convertFromTo(fromUnit: String, toUnit: String, valueFrom: String): String {
@@ -43,6 +44,6 @@ class ConverterWeight : Converter() {
             }
             else -> convertTo = (0.0).toBigDecimal()
         }
-        return convertTo.toString()
+        return convertTo.setScale(15, RoundingMode.HALF_EVEN).toString()
     }
 }

@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat.getSystemService
 
 import androidx.fragment.app.Fragment
 import com.example.lr1.FactoryMethod.Companion.unit
+import java.math.RoundingMode
 
 
 class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -42,21 +43,22 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
     private var toPos = 0
     private var fromPos = 0
 
-    var textF: String = ""
-    var textT: String = ""
+    private var textF = StringBuilder()
+    private var textT = StringBuilder()
+
+    private var position = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
             converter = savedInstanceState.getSerializable("converter") as Converter
-            textF = savedInstanceState.getString("from").toString()
+            textF = java.lang.StringBuilder(savedInstanceState.getString("from").toString())
             spinArray = savedInstanceState.getStringArray("array") as Array<String>
             //fromPos = savedInstanceState.getInt("fromSpin")
             //toPos = savedInstanceState.getInt("toSpin")
 
 
         } else {
-            println("fuck................................")
             converter = unit(Unit.Currency)
             spinArray = resources.getStringArray(R.array.currencies)
         }
@@ -92,7 +94,6 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         textTo = view.findViewById(R.id.editText2)
 
         textFrom .showSoftInputOnFocus = false
-        textTo .showSoftInputOnFocus = false
 
         currencyButton.setOnClickListener(this)
         weightButton.setOnClickListener(this)
@@ -116,12 +117,18 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        if (textF != "") {
-            textT = converter.convertFromTo(
-                fromSpinner.selectedItem.toString(),
-                toSpinner.selectedItem.toString(), textF
+        if (textF.isNotEmpty()) {
+            textT = StringBuilder(
+                converter.convertFromTo(
+                    fromSpinner.selectedItem.toString(),
+                    toSpinner.selectedItem.toString(), textF.toString()
+                )
             )
-            textTo.setText(textT)
+            var buf = textT.toString()
+            buf = zeroDel(buf)
+
+            textT = StringBuilder("$buf")
+            textTo.setText(textT.toString())
         }
     }
 
@@ -159,10 +166,10 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                     toPos = 0
                 }
                 copyButton1.id -> {
-                    if (textF != "") {
+                    if (!textF.equals("")) {
                         val clipboard =
                             activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                        val clip = ClipData.newPlainText("text", textF)
+                        val clip = ClipData.newPlainText("text", textF.toString())
                         clipboard?.setPrimaryClip(clip)
                         fromPos = fromSpinner.selectedItemPosition
                         toPos = toSpinner.selectedItemPosition
@@ -170,10 +177,10 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                     } else Toast.makeText(context, "Enter value to copy", Toast.LENGTH_SHORT).show()
                 }
                 copyButton2.id -> {
-                    if (textT != "") {
+                    if (!textT.equals("")) {
                         val clipboard =
                             activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                        val clip = ClipData.newPlainText("text", textT)
+                        val clip = ClipData.newPlainText("text", textT.toString())
                         clipboard?.setPrimaryClip(clip)
                         fromPos = fromSpinner.selectedItemPosition
                         toPos = toSpinner.selectedItemPosition
@@ -181,17 +188,11 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                     } else Toast.makeText(context, "Enter value to copy", Toast.LENGTH_SHORT).show()
                 }
                 revButton.id -> {
-                    //val textB = textT
-                    //textT = textF
-                    //textF = textB
+                    var buf = textT.toString()
+                    buf = zeroDel(buf)
 
-                    //textTo.setText(textT)
-                    //textFrom.setText(textF)
-                    textF = ""
-                    textT = ""
-
-                    textFrom.text.clear()
-                    textTo.text.clear()
+                    textF = StringBuilder("$buf")
+                    textFrom.setText(textF.toString())
 
                     fromPos = toSpinner.selectedItemPosition
                     toPos = fromSpinner.selectedItemPosition
@@ -213,49 +214,80 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
 
     fun setFromText(buttonIndex: Int) {
+        position = textFrom.selectionStart
         if (!(spinArray.contentEquals(resources.getStringArray(R.array.currencies)) && textF.length -
                     textF.indexOf(".") > 2 && textF.contains(".") && buttonIndex !=11
-                    && buttonIndex != 12) ||( textF.length -
-            textF.indexOf(".") <= 15 && !(spinArray.contentEquals(resources.getStringArray(R.array.currencies))))
+                    && buttonIndex != 12) && !(textF.contains(".") && textF.length -
+            textF.indexOf(".") > 15 && !(spinArray.contentEquals(resources.getStringArray(R.array.currencies))))
         ) {
+
             when (buttonIndex) {
-                1 -> textF += "1"
-                2 -> textF += "2"
-                3 -> textF += "3"
-                4 -> textF += "4"
-                5 -> textF += "5"
-                6 -> textF += "6"
-                7 -> textF += "7"
-                8 -> textF += "8"
-                9 -> textF += "9"
+                1 -> textF.insert(position, "1")
+                2 -> textF.insert(position, "2")
+                3 -> textF.insert(position, "3")
+                4 -> textF.insert(position, "4")
+                5 -> textF.insert(position, "5")
+                6 -> textF.insert(position, "6")
+                7 -> textF.insert(position, "7")
+                8 -> textF.insert(position, "8")
+                9 -> textF.insert(position, "9")
                 10 -> {
                     if (!textF.contains(".")) {
-                        textF += if (textF.isNullOrEmpty()) {
-                            "0."
-                        } else {
-                            "."
+                        if (textF.isEmpty()){
+                            textF.append("0.")
+                            position += 1
                         }
-                    } else Toast.makeText(context, "Double dot isn't allowed", Toast.LENGTH_SHORT)
-                        .show()
+                        else
+                            textF.insert(position, ".")
+                    }
+                    else {
+                        Toast.makeText(context, "Double dot isn't allowed", Toast.LENGTH_SHORT)
+                            .show()
+                        return
+                    }
                 }
                 0 -> {
                     if (!(textF.isNotEmpty() && textF[0] == '0' && !textF.contains("."))) {
-                        textF += "0"
+                        textF.insert(position, "0")
                     } else Toast.makeText(context, "Double zero isn't allowed", Toast.LENGTH_SHORT)
                         .show()
                 }
-                11 -> textF = textF.dropLast(1)
-                12 -> textF = ""
+                11 -> {
+                    if (position >= 1) {
+                        textF = textF.deleteCharAt(position-1)
+                        position -= 2
+                    }
+                    else return
+                }
+                12 -> {
+                    textF.clear()
+                    position = 0
+                    textFrom.text.clear()
+                    textTo.text.clear()
+                    return
+                }
             }
+
+            textFrom.setText(textF.toString())
+            textT = if (textF.isNotEmpty()) {
+                StringBuilder(
+                    converter.convertFromTo(
+                        fromSpinner.selectedItem.toString(),
+                        toSpinner.selectedItem.toString(), textF.toString()
+                    )
+                )
+
+            } else StringBuilder("")
+            var buf = textT.toString()
+            buf = zeroDel(buf)
+
+            textT = StringBuilder("$buf")
+            textTo.setText(textT.toString())
+            textTo.setText(textT.toString())
+            position += 1
+            textFrom.setSelection(position)
         }
-        textFrom.setText(textF)
-        textT = if (textF != "") {
-            converter.convertFromTo(
-                fromSpinner.selectedItem.toString(),
-                toSpinner.selectedItem.toString(), textF
-            )
-        } else ""
-        textTo.setText(textT)
+        else Toast.makeText(context, "fuck you", Toast.LENGTH_SHORT).show()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -264,7 +296,18 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         outState.putSerializable("converter", converter)
         outState.putInt("fromSpin", fromSpinner.selectedItemPosition)
         outState.putInt("toSpin", toSpinner.selectedItemPosition)
-        outState.putString("from", textF)
+        outState.putString("from", textF.toString())
         outState.putStringArray("array", spinArray)
+    }
+
+    private fun zeroDel(str: String ) : String{
+        var buf = str
+        while (true)
+            if ("." in buf && buf.last() == '0' && buf[buf.length - 2] != '.') {
+                buf = buf.dropLast(1)
+            } else {
+                break
+            }
+        return buf
     }
 }
