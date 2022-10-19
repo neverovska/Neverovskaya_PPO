@@ -1,20 +1,14 @@
 package com.example.lr1
 
-import android.R.attr.label
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.GestureDetector.SimpleOnGestureListener
 import android.widget.*
-import androidx.core.content.ContextCompat.getSystemService
-
 import androidx.fragment.app.Fragment
 import com.example.lr1.FactoryMethod.Companion.unit
-import java.math.RoundingMode
 
 
 class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -39,6 +33,9 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
     private lateinit var converter: Converter
 
     private lateinit var adapter: ArrayAdapter<String>
+
+    private lateinit var clipboard: ClipboardManager
+    private lateinit var clipData: ClipData
 
     private var toPos = 0
     private var fromPos = 0
@@ -93,12 +90,14 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         textFrom = view.findViewById(R.id.editText1)
         textTo = view.findViewById(R.id.editText2)
 
-        textFrom .showSoftInputOnFocus = false
+        textFrom.showSoftInputOnFocus = false
+        registerForContextMenu(textFrom)
 
         currencyButton.setOnClickListener(this)
         weightButton.setOnClickListener(this)
         distanceButton.setOnClickListener(this)
         volumeButton.setOnClickListener(this)
+
 
         copyButton1.setOnClickListener(this)
         copyButton2.setOnClickListener(this)
@@ -117,24 +116,13 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        if (textF.isNotEmpty()) {
-            textT = StringBuilder(
-                converter.convertFromTo(
-                    fromSpinner.selectedItem.toString(),
-                    toSpinner.selectedItem.toString(), textF.toString()
-                )
-            )
-            var buf = textT.toString()
-            buf = zeroDel(buf)
-
-            textT = StringBuilder("$buf")
-            textTo.setText(textT.toString())
-        }
+        conversion()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
 
     }
+
 
     override fun onClick(v: View?) {
 
@@ -167,10 +155,10 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                 }
                 copyButton1.id -> {
                     if (!textF.equals("")) {
-                        val clipboard =
-                            activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                        val clip = ClipData.newPlainText("text", textF.toString())
-                        clipboard?.setPrimaryClip(clip)
+                        clipboard =
+                            activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        clipData = ClipData.newPlainText("text", textF.toString())
+                        clipboard.setPrimaryClip(clipData)
                         fromPos = fromSpinner.selectedItemPosition
                         toPos = toSpinner.selectedItemPosition
                         Toast.makeText(context, "Value is copied", Toast.LENGTH_SHORT).show()
@@ -178,13 +166,18 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                 }
                 copyButton2.id -> {
                     if (!textT.equals("")) {
-                        val clipboard =
-                            activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                        val clip = ClipData.newPlainText("text", textT.toString())
-                        clipboard?.setPrimaryClip(clip)
+                        clipboard =
+                            activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+                        clipData = ClipData.newPlainText("text", textT.toString())
+                        clipboard.setPrimaryClip(clipData)
                         fromPos = fromSpinner.selectedItemPosition
                         toPos = toSpinner.selectedItemPosition
-                        Toast.makeText(context, "Value is copied", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Value is copied ${clipboard.primaryClip?.getItemAt(0)?.text}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else Toast.makeText(context, "Enter value to copy", Toast.LENGTH_SHORT).show()
                 }
                 revButton.id -> {
@@ -204,7 +197,7 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
     }
 
 
-    fun selItem(view: View) {
+    private fun selItem(view: View) {
         adapter = ArrayAdapter(view.context, android.R.layout.simple_spinner_item, spinArray)
         fromSpinner.adapter = adapter
         toSpinner.adapter = adapter
@@ -216,9 +209,9 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
     fun setFromText(buttonIndex: Int) {
         position = textFrom.selectionStart
         if (!(spinArray.contentEquals(resources.getStringArray(R.array.currencies)) && textF.length -
-                    textF.indexOf(".") > 2 && textF.contains(".") && buttonIndex !=11
+                    textF.indexOf(".") > 2 && textF.contains(".") && buttonIndex != 11
                     && buttonIndex != 12) && !(textF.contains(".") && textF.length -
-            textF.indexOf(".") > 15 && !(spinArray.contentEquals(resources.getStringArray(R.array.currencies))))
+                    textF.indexOf(".") > 15 && !(spinArray.contentEquals(resources.getStringArray(R.array.currencies))))
         ) {
 
             when (buttonIndex) {
@@ -233,14 +226,12 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                 9 -> textF.insert(position, "9")
                 10 -> {
                     if (!textF.contains(".")) {
-                        if (textF.isEmpty()){
+                        if (textF.isEmpty()) {
                             textF.append("0.")
                             position += 1
-                        }
-                        else
+                        } else
                             textF.insert(position, ".")
-                    }
-                    else {
+                    } else {
                         Toast.makeText(context, "Double dot isn't allowed", Toast.LENGTH_SHORT)
                             .show()
                         return
@@ -254,10 +245,9 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                 }
                 11 -> {
                     if (position >= 1) {
-                        textF = textF.deleteCharAt(position-1)
+                        textF = textF.deleteCharAt(position - 1)
                         position -= 2
-                    }
-                    else return
+                    } else return
                 }
                 12 -> {
                     textF.clear()
@@ -269,25 +259,10 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
             }
 
             textFrom.setText(textF.toString())
-            textT = if (textF.isNotEmpty()) {
-                StringBuilder(
-                    converter.convertFromTo(
-                        fromSpinner.selectedItem.toString(),
-                        toSpinner.selectedItem.toString(), textF.toString()
-                    )
-                )
-
-            } else StringBuilder("")
-            var buf = textT.toString()
-            buf = zeroDel(buf)
-
-            textT = StringBuilder("$buf")
-            textTo.setText(textT.toString())
-            textTo.setText(textT.toString())
+            conversion()
             position += 1
             textFrom.setSelection(position)
-        }
-        else Toast.makeText(context, "fuck you", Toast.LENGTH_SHORT).show()
+        } else Toast.makeText(context, "Too many numbers after dot", Toast.LENGTH_SHORT).show()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -300,7 +275,7 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         outState.putStringArray("array", spinArray)
     }
 
-    private fun zeroDel(str: String ) : String{
+    private fun zeroDel(str: String): String {
         var buf = str
         while (true)
             if ("." in buf && buf.last() == '0' && buf[buf.length - 2] != '.') {
@@ -309,5 +284,66 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                 break
             }
         return buf
+    }
+
+
+    private fun paste() {
+        position = textFrom.selectionStart
+
+        val bufTxt = clipboard.primaryClip?.getItemAt(0)?.text.toString()
+        if ((!textF.contains(".") && bufTxt.contains("."))
+            || (textF.contains(".") && !bufTxt.contains("."))) {
+            if (!(spinArray.contentEquals(resources.getStringArray(R.array.currencies)) && textF.length -
+                        textF.indexOf(".") > 2 && textF.contains(".") && textF.indexOf(".") < position) && !(textF.contains(".") && textF.length -
+                        textF.indexOf(".") > 15 && textF.indexOf(".") < position && !(spinArray.contentEquals(
+                    resources.getStringArray(R.array.currencies)
+                ))))
+                {
+                    textF.insert(position, bufTxt)
+                    textFrom.setText(textF.toString())
+                    position += bufTxt.length
+                    textFrom.setSelection(position)
+                }
+            else Toast.makeText(context, "Too many numbers after dot", Toast.LENGTH_SHORT).show()
+        } else Toast.makeText(context, "Double dot isn't allowed", Toast.LENGTH_SHORT).show()
+        conversion()
+    }
+
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu,
+        v: View,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        val inflater = MenuInflater(context)
+        inflater.inflate(R.menu.c_menu, menu)
+
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+
+        if (item.itemId == R.id.paste) {
+            paste()
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    private fun conversion(){
+        if (textF.isNotEmpty()) {
+            textT = StringBuilder(
+                converter.convertFromTo(
+                    fromSpinner.selectedItem.toString(),
+                    toSpinner.selectedItem.toString(), textF.toString()
+                )
+            )
+            var buf = textT.toString()
+            buf = zeroDel(buf)
+
+            textT = StringBuilder("$buf")
+            textTo.setText(textT.toString())
+        }
     }
 }
