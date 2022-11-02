@@ -3,12 +3,16 @@ package com.example.lr1
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.example.lr1.FactoryMethod.Companion.unit
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 
 class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -25,25 +29,31 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
     private lateinit var fromSpinner: Spinner
     private lateinit var toSpinner: Spinner
 
-    private lateinit var textFrom: EditText
-    private lateinit var textTo: EditText
+    //   companion object{
 
-    private lateinit var spinArray: Array<String>
+    lateinit var textFrom: EditText
+    lateinit var textTo: EditText
 
-    private lateinit var converter: Converter
+    lateinit var spinArray: Array<String>
 
-    private lateinit var adapter: ArrayAdapter<String>
+    lateinit var converter: Converter
 
-    private lateinit var clipboard: ClipboardManager
-    private lateinit var clipData: ClipData
+    lateinit var adapter: ArrayAdapter<String>
 
-    private var toPos = 0
-    private var fromPos = 0
+    var toPos = 0
+    var fromPos = 0
 
-    private var textF = StringBuilder()
-    private var textT = StringBuilder()
 
-    private var position = 0
+    var textT = StringBuilder()
+
+
+    private lateinit var time: LocalTime
+
+    var clipboard: ClipboardManager? = null
+    lateinit var clipData: ClipData
+    var textF = StringBuilder()
+    var position = 0
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,9 +80,13 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         return inflater.inflate(R.layout.fragment_values, container, false)
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        time = LocalTime.now()
+        clipboard =
+            activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         currencyButton = view.findViewById(R.id.button_c)
         weightButton = view.findViewById(R.id.button_w)
@@ -107,6 +121,23 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         fromSpinner.onItemSelectedListener = this
         toSpinner.onItemSelectedListener = this
 
+        textFrom.customSelectionActionModeCallback = object : ActionMode.Callback {
+            override fun onCreateActionMode(p0: ActionMode?, p1: Menu?): Boolean {
+                return false
+            }
+
+            override fun onPrepareActionMode(p0: ActionMode?, p1: Menu?): Boolean {
+                return false
+            }
+
+            override fun onActionItemClicked(p0: ActionMode?, p1: MenuItem?): Boolean {
+                return false
+            }
+
+            override fun onDestroyActionMode(p0: ActionMode?) {
+
+            }
+        }
 //        fromSpinner.setSelection(fromPos)
 //        toSpinner.setSelection(toPos)
         if (savedInstanceState != null) {
@@ -155,40 +186,59 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                 }
                 copyButton1.id -> {
                     if (!textF.equals("")) {
-                        clipboard =
-                            activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
                         clipData = ClipData.newPlainText("text", textF.toString())
-                        clipboard.setPrimaryClip(clipData)
+                        clipboard!!.setPrimaryClip(clipData)
                         fromPos = fromSpinner.selectedItemPosition
                         toPos = toSpinner.selectedItemPosition
-                        Toast.makeText(context, "Value is copied", Toast.LENGTH_SHORT).show()
-                    } else Toast.makeText(context, "Enter value to copy", Toast.LENGTH_SHORT).show()
+                        if (toastTime(time))
+                            Toast.makeText(
+                                context,
+                                "Value is copied",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        time = LocalTime.now()
+                    } else {
+                        if (toastTime(time))
+                            Toast.makeText(context, "Enter value to copy", Toast.LENGTH_SHORT)
+                                .show()
+                        time = LocalTime.now()
+                    }
                 }
                 copyButton2.id -> {
                     if (!textT.equals("")) {
-                        clipboard =
-                            activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
 
                         clipData = ClipData.newPlainText("text", textT.toString())
-                        clipboard.setPrimaryClip(clipData)
+                        clipboard!!.setPrimaryClip(clipData)
                         fromPos = fromSpinner.selectedItemPosition
                         toPos = toSpinner.selectedItemPosition
-                        Toast.makeText(
-                            context,
-                            "Value is copied ${clipboard.primaryClip?.getItemAt(0)?.text}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else Toast.makeText(context, "Enter value to copy", Toast.LENGTH_SHORT).show()
+
+                        if (toastTime(time))
+                            Toast.makeText(
+                                context,
+                                "Value is copied",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        time = LocalTime.now()
+                    } else {
+                        if (toastTime(time))
+                            Toast.makeText(context, "Enter value to copy", Toast.LENGTH_SHORT)
+                                .show()
+                        time = LocalTime.now()
+                    }
                 }
                 revButton.id -> {
+
                     var buf = textT.toString()
                     buf = zeroDel(buf)
 
-                    textF = StringBuilder("$buf")
+                    textF = StringBuilder(buf)
                     textFrom.setText(textF.toString())
 
                     fromPos = toSpinner.selectedItemPosition
                     toPos = fromSpinner.selectedItemPosition
+
 
                 }
             }
@@ -208,10 +258,13 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
     fun setFromText(buttonIndex: Int) {
         position = textFrom.selectionStart
+        textF = StringBuilder(textFrom.text.toString())
+
         if (!(spinArray.contentEquals(resources.getStringArray(R.array.currencies)) && textF.length -
                     textF.indexOf(".") > 2 && textF.contains(".") && buttonIndex != 11
                     && buttonIndex != 12) && !(textF.contains(".") && textF.length -
-                    textF.indexOf(".") > 15 && !(spinArray.contentEquals(resources.getStringArray(R.array.currencies))))
+                    textF.indexOf(".") > 15 && buttonIndex != 11
+                    && buttonIndex != 12 && !(spinArray.contentEquals(resources.getStringArray(R.array.currencies))))
         ) {
 
             when (buttonIndex) {
@@ -232,28 +285,46 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                         } else
                             textF.insert(position, ".")
                     } else {
-                        Toast.makeText(context, "Double dot isn't allowed", Toast.LENGTH_SHORT)
-                            .show()
+                        if (toastTime(time))
+                            Toast.makeText(context, "Double dot isn't allowed", Toast.LENGTH_SHORT)
+                                .show()
+                        time = LocalTime.now()
                         return
+
                     }
                 }
                 0 -> {
                     if (!(textF.isNotEmpty() && textF[0] == '0' && !textF.contains("."))) {
                         textF.insert(position, "0")
-                    } else Toast.makeText(context, "Double zero isn't allowed", Toast.LENGTH_SHORT)
-                        .show()
+                    } else {
+                        if (toastTime(time))
+                            Toast.makeText(context, "Double zero isn't allowed", Toast.LENGTH_SHORT)
+                                .show()
+                        time = LocalTime.now()
+                        return
+
+                    }
                 }
                 11 -> {
                     if (position >= 1) {
-                        textF = textF.deleteCharAt(position - 1)
-                        position -= 2
+                        if (!(position == 1 && textF.indexOf(".") == 1)) {
+                            textF = textF.deleteCharAt(position - 1)
+                            position -= 2
+                        } else {
+                            textF.clear()
+                            position = 0
+                            textFrom.text!!.clear()
+                            textTo.text!!.clear()
+                            return
+                        }
                     } else return
                 }
                 12 -> {
                     textF.clear()
+                    textT.clear()
                     position = 0
-                    textFrom.text.clear()
-                    textTo.text.clear()
+                    textFrom.text!!.clear()
+                    textTo.text!!.clear()
                     return
                 }
             }
@@ -261,8 +332,13 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
             textFrom.setText(textF.toString())
             conversion()
             position += 1
-            textFrom.setSelection(position)
-        } else Toast.makeText(context, "Too many numbers after dot", Toast.LENGTH_SHORT).show()
+
+        } else {
+            if (toastTime(time))
+                Toast.makeText(context, "Too many numbers after dot", Toast.LENGTH_SHORT).show()
+            time = LocalTime.now()
+        }
+        textFrom.setSelection(position)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -273,6 +349,8 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         outState.putInt("toSpin", toSpinner.selectedItemPosition)
         outState.putString("from", textF.toString())
         outState.putStringArray("array", spinArray)
+
+
     }
 
     private fun zeroDel(str: String): String {
@@ -286,52 +364,68 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         return buf
     }
 
-
-    private fun paste() {
-        position = textFrom.selectionStart
-
-        val bufTxt = clipboard.primaryClip?.getItemAt(0)?.text.toString()
-        if ((!textF.contains(".") && bufTxt.contains("."))
-            || (textF.contains(".") && !bufTxt.contains("."))) {
-            if (!(spinArray.contentEquals(resources.getStringArray(R.array.currencies)) && textF.length -
-                        textF.indexOf(".") > 2 && textF.contains(".") && textF.indexOf(".") < position) && !(textF.contains(".") && textF.length -
-                        textF.indexOf(".") > 15 && textF.indexOf(".") < position && !(spinArray.contentEquals(
-                    resources.getStringArray(R.array.currencies)
-                ))))
-                {
-                    textF.insert(position, bufTxt)
-                    textFrom.setText(textF.toString())
-                    position += bufTxt.length
-                    textFrom.setSelection(position)
-                }
-            else Toast.makeText(context, "Too many numbers after dot", Toast.LENGTH_SHORT).show()
-        } else Toast.makeText(context, "Double dot isn't allowed", Toast.LENGTH_SHORT).show()
-        conversion()
-    }
-
-
     override fun onCreateContextMenu(
         menu: ContextMenu,
         v: View,
         menuInfo: ContextMenu.ContextMenuInfo?
     ) {
         super.onCreateContextMenu(menu, v, menuInfo)
-        val inflater = MenuInflater(context)
-        inflater.inflate(R.menu.c_menu, menu)
+
+        val menuInflater = MenuInflater(context)
+        menuInflater.inflate(R.menu.c_menu, menu)
+    }
+
+
+    private fun paste() {
+        position = textFrom.selectionStart
+        val bufTxt: String
+
+        try {
+            bufTxt = clipboard!!.primaryClip?.getItemAt(0)?.text.toString()
+            val err = bufTxt.toBigDecimal()
+        } catch (e: Exception) {
+            Toast.makeText(context, "Copying is not successful", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!(textF.contains(".") && bufTxt.contains("."))
+        ) {
+            if (!(spinArray.contentEquals(resources.getStringArray(R.array.currencies)) && textF.length -
+                        textF.indexOf(".") > 2 && textF.contains(".") && textF.indexOf(".") < position) && !(textF.contains(
+                    "."
+                ) && textF.length -
+                        textF.indexOf(".") > 15 && textF.indexOf(".") < position && !(spinArray.contentEquals(
+                    resources.getStringArray(R.array.currencies)
+                )))
+            ) {
+                textF.insert(position, bufTxt)
+                textFrom.setText(textF.toString())
+                position += bufTxt.length
+                textFrom.setSelection(position)
+            } else {
+                if (toastTime(time))
+                    Toast.makeText(context, "Too many numbers after dot", Toast.LENGTH_SHORT)
+                        .show()
+                time = LocalTime.now()
+            }
+        } else {
+            if (toastTime(time))
+                Toast.makeText(context, "Double dot isn't allowed", Toast.LENGTH_SHORT).show()
+            time = LocalTime.now()
+        }
+        conversion()
 
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-
         if (item.itemId == R.id.paste) {
             paste()
-        } else {
-            return false;
+            return true
         }
-        return true;
+        return false
     }
 
-    private fun conversion(){
+    private fun conversion() {
         if (textF.isNotEmpty()) {
             textT = StringBuilder(
                 converter.convertFromTo(
@@ -342,8 +436,14 @@ class ValuesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
             var buf = textT.toString()
             buf = zeroDel(buf)
 
-            textT = StringBuilder("$buf")
+            textT = StringBuilder(buf)
             textTo.setText(textT.toString())
         }
+    }
+
+    private fun toastTime(time: LocalTime): Boolean {
+        return (LocalTime.now().second -
+                time.second >= 2 && LocalTime.now().minute - time.minute == 0)
+                || LocalTime.now().minute - time.minute != 0
     }
 }

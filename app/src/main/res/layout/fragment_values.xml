@@ -93,7 +93,6 @@
                 android:focusedByDefault="false"
                 android:inputType="textPersonName"
                 android:longClickable="false"
-
                 android:keyboardNavigationCluster="false"
                 android:minHeight="48dp"
                 android:text="" />
